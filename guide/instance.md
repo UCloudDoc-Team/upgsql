@@ -4,7 +4,7 @@
 
 进入产品主页会自动显示当前创建的实例列表。
 
-![image](/images/pgv4start.png)
+![image](/images/instance/list.png)
 
 ## 重启PostgreSQL实例
 
@@ -18,49 +18,38 @@
 
 ![image](/images/instance/close.png)
 
+![image](/images/instance/close-confirm.png)
+
+![image](/images/instance/close-done.png)
+
 ## 启动PostgreSQL实例
 如果要启动处于关闭状态的PostgreSQL实例，首先选择需要启动的PostgreSQL实例，在右侧操作项中，点击“启动”按钮，弹出的确认对话框选择确定，即可启动PostgreSQL实例。
 
 ![image](/images/instance/start.png)
 
+确认信息无误后点击“确定”
+![image](/images/instance/start-confim.png)
+
+完成后点击“关闭”
+![image](/images/instance/start-done.png)
+
+如果需要同时启动多个PostgreSQL实例，选择相应的PostgreSQL实例，选择列表页面上方的“启动”，弹出的对话框选择“确定”，即可启动多个PostgreSQL实例。
+
+
 ## 删除PostgreSQL实例
-
-进入产品主页， 在列表中找到对应的实例， 点击“操作”栏下的扩展按钮， 点击“删除”
-
-![image](/images/instance/detail.png)
-
-## 查看PostgreSQL实例详情
 
 进入产品主页， 在列表中找到对应的实例， 点击“操作”栏下的扩展按钮， 点击“删除”
 
 ![image](/images/instance/delete.png)
 
 
+## 查看PostgreSQL实例详情
 
-![image](/images/pgv4start1.png)
+进入产品主页， 在列表中找到对应的实例， 点击“操作”栏下的“详情”
 
-如果需要同时启动多个PostgreSQL实例，选择相应的PostgreSQL实例，选择列表页面上方的“启动”，弹出的对话框选择“确定”，即可启动多个PostgreSQL实例。
-
-
+![image](/images/instance/detail.png)
 
 
-操作步骤参考启动PostgreSQL实例。
-
-## 从库管理
-
-用户可以对PostgreSQL实例的主库（Master）创建从库（standby）。从库不支持批量创建，一次只能针对一个PostgreSQL实例的主库（Master）。
-
-选中PostgreSQL实例，点击“创建从库”。
-
-![image](/images/pgv4slave.png)
-
-在弹窗中输入从库（standby）的名称。
-
-![image](/images/pgv4slave1.png)
-
-点击“确定”之后，进入付费页面，确认付费之后，从库（standby）购买成功并进行初始化和数据同步。
-
-初始化时间取决于数据量大小。
 
 ## 备份管理
 
