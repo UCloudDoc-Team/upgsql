@@ -11,4 +11,5 @@
 * 操作指南
     * [实例管理](/upgsql/guide/instance)
     * [备份管理](/upgsql/guide/backup)
+    * [安全组](/upgsql/guide/backup)
 * [FAQs](/upgsql/faq)
