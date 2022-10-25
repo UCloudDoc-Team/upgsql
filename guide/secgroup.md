@@ -15,7 +15,7 @@ UPgSQL实例支持安全组功能。 当用户账号开通安全组功能后， 
 
 点击操作栏的“详情”按钮可查看当前此安全组绑定的资源以及安全规则。
 
-![image](/images/guide/secgroup_detail.png)
+![image](/images/secgroup/secgroup_detail.png)
 
 ## 创建/修改安全组
 
