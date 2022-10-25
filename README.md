@@ -9,9 +9,9 @@
     * [回收/删除](/upgsql/price/recycle)
 * [快速上手](/upgsql/quick)
 * 操作指南
+    * [安全组](/upgsql/guide/secgroup)
     * [实例管理](/upgsql/guide/instance)
     * [备份管理](/upgsql/guide/backup)
-    * [安全组](/upgsql/guide/secgroup)
 * [FAQs](/upgsql/faq)
 
 
