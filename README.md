@@ -5,6 +5,7 @@
     * [什么是云数据PostgreSQL(NVMe)](/upgsql/concept)
     * [主要概念](/upgsql/terminology)
     * [产品优势](/upgsql/superiority)
+    * [插件](/upgsql/plugin/home)
 * 计费说明
     * [计费指南](/upgsql/price/bill)
     * [回收/删除](/upgsql/price/recycle)
