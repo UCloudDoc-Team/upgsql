@@ -58,5 +58,5 @@
 | tsm_system_time        | 1.0    | 1.0    | 1.0    | 1.0    | 提供了表采样方法SYSTEM_TIME                     |
 | unaccent               | 1.1    | 1.1    | 1.1    | 1.1    | 文本搜索字典，它能从词位中移除重音（附加符号）                 |
 | zhparser               | 无      | 2.1    | 2.1    | 2.1    | 中文全文搜索                                  |
-| postgreml              | 2.6.0  | 2.6.0  | 无      | 无      | pg ai插件                                 |
-| pgvector               | 2.6.0  | 2.6.0  | 无      | 无      | Postgres 的开源向量相似度搜索                     |
+| postgreml              | 2.6.0  | 2.6.0  | 无      | 无      | PostgreSQL AI插件                         |
+| pgvector               | 2.6.0  | 2.6.0  | 无      | 无      | PostgreSQL 的开源向量相似度搜索                     |
