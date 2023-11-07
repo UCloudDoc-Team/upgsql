@@ -13,4 +13,6 @@
     * [安全组](/upgsql/guide/secgroup)
     * [实例管理](/upgsql/guide/instance)
     * [备份管理](/upgsql/guide/backup)
+    * [配置升降级管理](/upgsql/guide/upgrade)
+    * [用户管理](/upgsql/guide/user)
 * [FAQs](/upgsql/faq)
