@@ -1,7 +1,7 @@
 
 * [概览](/upgsql/README)
 * 产品简介
-    * [什么是云数据PostgreSQL(NVMe)](/upgsql/concept)
+    * [什么是云数据PostgreSQL](/upgsql/concept)
     * [主要概念](/upgsql/terminology)
     * [产品优势](/upgsql/superiority)
     * [插件列表](/upgsql/plugin/list)
