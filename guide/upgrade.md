@@ -8,7 +8,7 @@
 
 ## 配置选择
 
-可以重新选择PostgreSQL(NVMe)的配置。包括CPU、内存和磁盘。
+可以重新选择PostgreSQL的配置。包括CPU、内存和磁盘。
 ![image](/images/upgrade/upgrade-02.png)
 
 ## 价格变动
