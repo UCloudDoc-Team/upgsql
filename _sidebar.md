@@ -23,4 +23,9 @@
     * [日志管理](/upgsql/guide/log)
     * [监控管理](/upgsql/guide/monitor)
     * [参数管理](/upgsql/guide/parameter-manage)
+* PostgreSQL for AI
+    * Supabase
+        * [产品介绍](/upgsql/supabase/introduce)
+        * [操作指南](/upgsql/supabase/guide)
+        * [Supabase快速上手](/upgsql/supabase/quick)
 * [FAQs](/upgsql/faq)
