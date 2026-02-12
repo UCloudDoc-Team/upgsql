@@ -1,5 +1,5 @@
 
-# 什么是 Supabase（UCloud 托管版）
+# 什么是 Supabase
 
 Supabase 是一款领先的**开源后端即服务（BaaS）**平台，致力于为开发者提供媲美 Firebase 的极致开发体验，同时保持开源生态的灵活性与透明度。
 
