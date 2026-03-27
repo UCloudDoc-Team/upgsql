@@ -28,4 +28,7 @@
         * [产品介绍](/upgsql/supabase/introduce)
         * [操作指南](/upgsql/supabase/guide)
         * [Supabase快速上手](/upgsql/supabase/quick)
+    * MemoryDB
+        * [产品介绍](/upgsql/memorydb/introduce)
+        * [操作指南](/upgsql/memorydb/guide)
 * [FAQs](/upgsql/faq)
