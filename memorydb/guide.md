@@ -17,28 +17,12 @@
 
 ![image](/images/memorydb/memorydb_network.png)
 
-5. 设置实例名称，确认配置与费用后，点击"立即购买"完成创建。
-
-![image](/images/memorydb/memorydb_confirm.png)
-
-6. 实例创建完成后，页面跳转至 MemoryDB 管理列表，等待初始化完成后即可使用。
+5. 实例创建完成后，页面跳转至 MemoryDB 管理列表，等待初始化完成后即可使用。
 
 ![image](/images/memorydb/memorydb_list.png)
 
-7. 点击实例"详情"，可查看连接信息（Host、Port、数据库名、用户名）。
+6. 点击实例"详情"，可查看连接信息（Host、Port、数据库名、用户名）。
 
 ![image](/images/memorydb/memorydb_detail.png)
 
-# 配置外网访问
 
-1. 在实例详情页，点击"开启外网访问"。开启过程中实例会短暂重启，重启完成后外网访问生效。
-
-![image](/images/memorydb/external_access_entry.png)
-
-2. 确认外网带宽配置后，点击确认支付，等待实例重启完成。
-
-![image](/images/memorydb/external_access_pay.png)
-
-3. 外网访问开启后，请在"白名单"中添加允许访问的客户端 IP 或网段，以保障数据安全。
-
-![image](/images/memorydb/white_list.png)
