@@ -45,13 +45,15 @@
 
 ![image](/images/supabase/external_access_entry.png)
 
-2.确认外网配置的带宽后，确认支付并等待Supabase重启后即可开启外网访问功能。
+2.外网访问支持选择计费方式，按需选择按带宽计费或按流量计费，并调整带宽上限，确认支付并等待Supabase重启后即可开启外网访问功能。（按流量计费为后付费）
 
-![image](/images/supabase/external_access_pay.png)
+![image](/images/supabase/external_access_config.png)
 
-![image](/images/supabase/external_ui.png)
+![image](/images/supabase/external_access_connection.png)
 
-3.配置白名单。外网访问开启后，白名单默认是空的，此时还无法访问Supabase服务，需要在白名单中配置放行的IP或网段，Supabase服务才可以被访问到。
+3.支持开启SSL加密连接。如需要关闭SSL，需要先关闭外网访问能力。
+
+4.配置白名单。外网访问开启后，白名单默认是空的，此时还无法访问Supabase服务，需要在白名单中配置放行的IP或网段，Supabase服务才可以被访问到。
 
 ![image](/images/supabase/white_list.png)
 
