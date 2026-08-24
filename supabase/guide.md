@@ -85,3 +85,35 @@
 - S3_PROTOCOL_ENABLED： 布尔值（true/false）。开启后，Supabase 将允许通过 S3 兼容模式进行通信，而不仅仅局限于标准的 AWS 环境。
 
 - TENANT_ID：租户 ID。
+
+# 第三方登录
+
+Supabase支持统一用户认证体系，内置微信、支付宝、GitHub、Apple等主流第三方登录，一键配置即可接入，免去多平台对接与联调成本，大幅减少开发工作量、加速产品上线。
+
+## 使用条件
+
+1. 当Supabase实例已经开启外网访问能力，才能使用第三方登录功能。
+
+![image](/images/supabase/oauth_external_access.png)
+
+2. 使用第三方登录功能，需要先配置URL，包括业务URL和重定向URL，并配置或编辑身份验证提供商凭据。本页面所有配置项的启用/禁用、编辑功能，均需要重启Supabase实例才会生效。重启实例预计1分钟，建议在业务量低的时候进行操作。
+
+## 操作说明
+
+1. 首先需要保证当前Supabase实例已经开通外网访问能力，且实例状态为运行中。
+
+2. 配置业务URL。
+
+![image](/images/supabase/oauth_url_config.png)
+
+3. 配置身份验证提供商凭据，根据业务所需要的登录方式，按照提示获取OAuth凭据。以【支付宝登录】为例，需要先开启Alipay登录按钮，将回调地址粘贴进支付宝开放平台开发设置，再将Alipay侧提供的APP ID、Private Key、Alipay Public Key等信息填入。此处仅为保存配置。
+
+![image](/images/supabase/oauth_alipay_config.png)
+
+4. URL和OAuth凭据的配置改动后，需要手动重启Supabase实例，才会生效。再确认配置成功启用后，建议在业务环境进行测试配置正确与否。
+
+![image](/images/supabase/oauth_restart_confirm.png)
+
+配置成功后，终端用户在页面上点击支付宝登录，操作授权后即可登录。
+
+![image](/images/supabase/oauth_alipay_login.png)
