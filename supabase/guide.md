@@ -114,6 +114,6 @@ Supabase支持统一用户认证体系，内置微信、支付宝、GitHub、App
 
 ![image](/images/supabase/oauth_restart_confirm.png)
 
-配置成功后，终端用户在页面上点击支付宝登录，操作授权后即可登录。
+5. 配置成功后，终端用户在页面上点击支付宝登录，操作授权后即可登录。
 
 ![image](/images/supabase/oauth_alipay_login.png)
