@@ -25,8 +25,15 @@
 * PostgreSQL for AI
     * Supabase
         * [产品介绍](/upgsql/supabase/introduce)
-        * [操作指南](/upgsql/supabase/guide)
-        * [Supabase快速上手](/upgsql/supabase/quick)
+        * 操作指南
+            * [创建 Supabase 实例](/upgsql/supabase/guide#创建supabase实例)
+            * [配置外网访问](/upgsql/supabase/guide#配置外网访问)
+            * [配置 S3 存储](/upgsql/supabase/guide#配置-s3-存储)
+            * [第三方登录](/upgsql/supabase/guide#第三方登录)
+                * [使用条件](/upgsql/supabase/guide#使用条件)
+                * [第三方登录配置说明](/upgsql/supabase/guide#第三方登录配置说明)
+                * [邮件和短信登录](/upgsql/supabase/guide#邮件和短信登录)
+            * [Supabase快速上手](/upgsql/supabase/quick)
 * [FAQs](/upgsql/faq)
 
 
