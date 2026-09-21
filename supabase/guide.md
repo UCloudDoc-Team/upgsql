@@ -100,21 +100,23 @@ Supabase 支持统一用户认证体系，内置微信、支付宝、GitHub、Ap
 
 3. 已配置业务 URL、重定向 URL和身份验证提供商凭据。本页面配置项的启用、禁用和编辑均需要重启 Supabase 实例后才能生效，预计重启 1 分钟，建议在业务低峰期操作。
 
-4. 已绑定 NAT 网关，并配置允许访问公网服务的出口规则。NAT 网关的地域、项目、VPC 和子网需要与 Supabase 实例保持一致。未绑定 NAT 网关时，Supabase 实例无法访问外部身份提供商，第三方登录、邮件登录和短信登录均无法正常使用。
+### 4. 绑定 NAT 网关
 
-**4.1 进入 NAT 网关页面。**
+已绑定 NAT 网关，并配置允许访问公网服务的出口规则。NAT 网关的地域、项目、VPC 和子网需要与 Supabase 实例保持一致。未绑定 NAT 网关时，Supabase 实例无法访问外部身份提供商，第三方登录、邮件登录和短信登录均无法正常使用。
+
+#### 4.1 进入 NAT 网关页面
 
 确认 NAT 网关的地域和项目与目标 Supabase 实例一致，进入[私有网络 VPC > NAT 网关](https://console.ucloud.cn/vpc/natgw)页面。
 
 ![image](/images/supabase/natgw_entry.png)
 
-**4.2 创建 NAT 网关。**
+#### 4.2 创建 NAT 网关
 
 单击“创建 NAT 网关”。“所属 VPC”和“指定子网”需选择 Supabase 实例所在的 VPC 和子网；“外网弹性 IP”可根据实际情况选择新购或已有 IP，其他参数按业务需求配置后完成购买。
 
 ![image](/images/supabase/natgw_create.png)
 
-**4.3 配置出口规则。**
+#### 4.3 配置出口规则
 
 创建成功后，进入 NAT 网关详情页，在“出口规则”页签配置出口规则。可以使用默认出口规则，也可以根据业务需要添加自定义规则。NAT 网关详细说明请参见[NAT 网关文档](https://docs.ucloud.cn/vpc/guide/natgw)。
 
