@@ -19,6 +19,7 @@
        * [备份](/upgsql/guide/backup)
        * [恢复](/upgsql/guide/recovery)
     * [配置升降级管理](/upgsql/guide/upgrade)
+    * [插件市场](/upgsql/guide/plugin-market)
     * [用户管理](/upgsql/guide/user)
     * [日志管理](/upgsql/guide/log)
     * [监控管理](/upgsql/guide/monitor)
