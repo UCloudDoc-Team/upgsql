@@ -2093,9 +2093,9 @@ SELECT id, content, updated_at FROM docs;
 | [plproxy](#plproxy) | PL/Proxy 是面向水平拆分（分库分表）的代理语言，代理节点上的函数通过 `LANGUAGE plproxy` … | 是 |
 | [pglogical](#pglogical) | pglogical 提供逻辑复制能力，可按表/按库做发布订阅、跨大版本复制、多主与双向复制，是迁移与双写场景的常用工… | 是 |
 | [pglogical_origin](#pglogical_origin) | 兼容性占位扩展，从 PostgreSQL 9.4 升级的场景中保留该扩展名，正常使用 pglogical 时无需关注… | 否 |
-| [pgl_ddl_deploy](#pgl_ddl_deploy) | DDL 自动部署扩展，基于 pglogical 逻辑复制，把发布端的 DDL 变更自动同步到订阅端，避免逻辑复制场景… | 是 |
-| [decoderbufs](#decoderbufs) | 逻辑解码输出插件（Debezium 使用），以 Protocol Buffers 格式输出 WAL 变更，供 Deb… | 是 |
-| [wal2json](#wal2json) | 逻辑解码输出插件，把 WAL 变更以 JSON 格式输出给订阅端，用于 CDC（变更数据捕获）、实时同步到 Kafk… | 是 |
+| [pgl_ddl_deploy](#pgl_ddl_deploy) | DDL 自动部署扩展，基于 pglogical 逻辑复制，把发布端的 DDL 变更自动同步到订阅端，避免逻辑复制场景… | 否 |
+| [decoderbufs](#decoderbufs) | 逻辑解码输出插件（Debezium 使用），以 Protocol Buffers 格式输出 WAL 变更，供 Deb… | 否 |
+| [wal2json](#wal2json) | 逻辑解码输出插件，把 WAL 变更以 JSON 格式输出给订阅端，用于 CDC（变更数据捕获）、实时同步到 Kafk… | 否 |
 | [zombodb](#zombodb) | ZomboDB 扩展，把 Elasticsearch 作为 PostgreSQL 的索引后端，兼顾事务一致性（数据在… | 是 |
 | [http](#http) | HTTP 客户端扩展（pgsql-http），在 SQL 中直接发起同步 HTTP(S) 请求（GET/POST/H… | 否 |
 | [gzip](#gzip) | gzip 压缩函数扩展（pgsql-gzip），在库内直接对 bytea 数据做 gzip / gunzip 压缩与… | 否 |
@@ -2432,8 +2432,6 @@ CREATE EXTENSION IF NOT EXISTS pglogical_origin;
 
 DDL 自动部署扩展：基于 pglogical 逻辑复制，把发布端的 DDL 变更自动同步到订阅端，避免逻辑复制场景下结构不一致。
 
-> 使用前需将 `pgl_ddl_deploy` 加入参数 `shared_preload_libraries`（修改后需重启实例）。
-
 ```sql
 CREATE EXTENSION IF NOT EXISTS pgl_ddl_deploy;
 ```
@@ -2448,8 +2446,6 @@ CREATE EXTENSION IF NOT EXISTS pgl_ddl_deploy;
 
 逻辑解码输出插件（Debezium 使用）：以 Protocol Buffers 格式输出 WAL 变更，供 Debezium 捕获 PostgreSQL 变更。
 
-> 使用前需将 `decoderbufs` 加入参数 `shared_preload_libraries`（修改后需重启实例）。
-
 ```sql
 CREATE EXTENSION IF NOT EXISTS decoderbufs;
 ```
@@ -2463,8 +2459,6 @@ CREATE EXTENSION IF NOT EXISTS decoderbufs;
 #### wal2json
 
 逻辑解码输出插件：把 WAL 变更以 JSON 格式输出给订阅端，用于 CDC（变更数据捕获）、实时同步到 Kafka/数仓等场景。
-
-> 使用前需将 `wal2json` 加入参数 `shared_preload_libraries`（修改后需重启实例）。
 
 ```sql
 CREATE EXTENSION IF NOT EXISTS wal2json;
@@ -2610,7 +2604,7 @@ SELECT bt_index_check('public.orders_pkey'::regclass, heapallindexed => true);
 | [pg_buffercache](#pg_buffercache) | pg_buffercache 提供查看共享缓冲区（shared buffers）使用情况的视图与函数，哪些表/索引的… | 否 |
 | [pg_freespacemap](#pg_freespacemap) | pg_freespacemap 用于查看表的空闲空间映射（FSM），每个数据块中有多少可用空间，有助于判断更新后空间… | 否 |
 | [pgrowlocks](#pgrowlocks) | pgrowlocks 用于查看指定表中当前的行锁情况，哪些行被锁、由哪个事务持有、锁模式是什么、是否有多事务（mul… | 否 |
-| [pg_prewarm](#pg_prewarm) | pg_prewarm 可以把表或索引的数据主动加载到操作系统缓存或 PostgreSQL 共享缓冲区，用于实例重启后… | 是 |
+| [pg_prewarm](#pg_prewarm) | pg_prewarm 可以把表或索引的数据主动加载到操作系统缓存或 PostgreSQL 共享缓冲区，用于实例重启后… | 否 |
 | [pg_repack](#pg_repack) | pg_repack 用于在线消除表与索引膨胀，以重建表的方式回收空闲空间，相比 CLUSTER 或 VACUUM F… | 否 |
 | [pg_squeeze](#pg_squeeze) | pg_squeeze 用于在线重整膨胀的表与索引，通过建立表的压缩副本再切换，回收死元组与空闲空间，过程中不阻塞读写… | 是 |
 | [hypopg](#hypopg) | hypopg 提供虚拟索引能力，在不真正创建索引的前提下，让优化器按「假设存在的索引」生成执行计划，快速验证加索引是… | 否 |
@@ -2625,7 +2619,7 @@ SELECT bt_index_check('public.orders_pkey'::regclass, heapallindexed => true);
 | [pg_cron](#pg_cron) | pg_cron 是基于 cron 的作业调度插件，语法与 Linux crontab 一致，插件在数据库内以后台进程… | 是 |
 | [pgtap](#pgtap) | 数据库单元测试框架，用 SQL 编写断言（`ok()`、`is()` 等）测试表结构、函数与数据结果，并可输出 TA… | 否 |
 | [plpgsql_check](#plpgsql_check) | PL/pgSQL 静态检查扩展，在编译期检查函数中的语法、对象引用与类型问题（比默认的「调用时才报错」更早发现问题）… | 否 |
-| [pldbgapi](#pldbgapi) | PL/pgSQL 调试服务端支持，与 pldebugger 客户端配合，为存储过程/函数提供断点、单步与变量查看能力… | 是 |
+| [pldbgapi](#pldbgapi) | PL/pgSQL 调试服务端支持，与 pldebugger 客户端配合，为存储过程/函数提供断点、单步与变量查看能力… | 否 |
 
 <div id="pg_stat_statements"></div>
 
@@ -2917,8 +2911,6 @@ SELECT l.locked_row,
 #### pg_prewarm
 
 pg_prewarm 可以把表或索引的数据主动加载到操作系统缓存或 PostgreSQL 共享缓冲区，用于实例重启后、大查询前预热热点数据，避免冷启动时的大量随机 IO。
-
-> 使用前需将 `pg_prewarm` 加入参数 `shared_preload_libraries`（修改后需重启实例）。
 
 ```sql
 CREATE EXTENSION IF NOT EXISTS pg_prewarm;
@@ -3334,8 +3326,6 @@ WHERE p.pronamespace = 'public'::regnamespace;
 #### pldbgapi
 
 PL/pgSQL 调试服务端支持：与 pldebugger 客户端配合，为存储过程/函数提供断点、单步与变量查看能力。
-
-> 使用前需将 `pldbgapi` 加入参数 `shared_preload_libraries`（修改后需重启实例）。
 
 ```sql
 CREATE EXTENSION IF NOT EXISTS pldbgapi;
