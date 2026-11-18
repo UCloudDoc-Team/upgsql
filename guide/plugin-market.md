@@ -3,8 +3,10 @@
 
 ## 注意事项
 
-* `bool_plperl` 依赖 `plperl`，需要先安装 `plperl` 后再安装 `bool_plperl`。
-* `bool_plperlu` 依赖 `plperlu`，需要先安装 `plperlu` 后再安装 `bool_plperlu`。
+1. 重启是整实例重启，不是 reload。安装标记为“需重启”的插件时，同一实例上所有数据库的连接都会中断，请安排在业务低峰或维护窗口执行；同实例内多个“需重启”插件建议一次性连续安装，减少重启次数。
+2. “安装完成”不等于“可以使用”。部分插件（如 `wal2json`、`decoderbufs`、`pgl_ddl_deploy`）安装任务会显示成功，但功能仍需要额外条件：通常是 `wal_level = logical`（修改后必须重启才生效，仅 reload 无效），或需要先安装并启用依赖扩展（如 `pgl_ddl_deploy` 依赖 `pglogical`）。请以各插件“安装说明”中的前置条件为准。
+3. 预加载库名与插件名可能不同：例如 `pldbgapi` 对应的预加载库是 `plugin_debugger`，请以本文标注的库名为准，`shared_preload_libraries` 预加载库名不对可能导致启动失败。
+4. `bool_plperl` 依赖 `plperl`，需要先安装 `plperl` 后再安装 `bool_plperl`；`bool_plperlu` 依赖 `plperlu`，需要先安装 `plperlu` 后再安装 `bool_plperlu`。有依赖关系的插件顺序不对可能导致安装失败。
 
 ## 操作说明
 
@@ -39,7 +41,7 @@
 
 <div id="spatial-index"></div>
 
-| 插件 | 用途 | 是否需要预加载 |
+| 插件 | 用途 | 是否需要预加载（重启） |
 | --- | --- | --- |
 | [postgis](#postgis) | PostGIS 是 PostgreSQL 的空间数据库扩展，为数据库增加几何对象类型、空间索引与空间分析函数，用于存… | 否 |
 | [postgis_topology](#postgis_topology) | postgis_topology 是 PostGIS 的拓扑扩展，把几何数据组织为共享边的拓扑模型（节点、边、面），… | 否 |
@@ -407,7 +409,7 @@ CREATE EXTENSION IF NOT EXISTS imgsmlr;
 
 <div id="vector-ai-index"></div>
 
-| 插件 | 用途 | 是否需要预加载 |
+| 插件 | 用途 | 是否需要预加载（重启） |
 | --- | --- | --- |
 | [vector](#vector) | pgvector，向量数据类型与 HNSW / IVFFlat 近似最近邻索引，用于 AI 场景的语义检索、以图搜图… | 否 |
 | [vectorscale](#vectorscale) | 基于 pgvector 的 DiskANN 索引扩展（StreamingDiskANN），用磁盘驻留索引降低大向量集… | 是 |
@@ -593,7 +595,7 @@ SELECT substruct(mol_from_smiles('c1ccccc1'), mol_from_smiles('c1ccccc1O')) AS i
 
 <div id="fulltext-index"></div>
 
-| 插件 | 用途 | 是否需要预加载 |
+| 插件 | 用途 | 是否需要预加载（重启） |
 | --- | --- | --- |
 | [pg_trgm](#pg_trgm) | pg_trgm 通过三元组（trigram）匹配来计算文本相似度，提供相似度函数、相似度运算符以及支持模糊匹配的 G… | 否 |
 | [pg_bigm](#pg_bigm) | pg_bigm 使用二元语法（2-gram）建立 GIN 索引来加速模糊匹配，支持 `LIKE '%关键词%'` 这… | 是 |
@@ -957,7 +959,7 @@ CREATE EXTENSION IF NOT EXISTS tsearch2;
 
 <div id="timeseries-queue-index"></div>
 
-| 插件 | 用途 | 是否需要预加载 |
+| 插件 | 用途 | 是否需要预加载（重启） |
 | --- | --- | --- |
 | [timescaledb](#timescaledb) | 时序数据库扩展，提供 hypertable（按时间自动分区）、连续聚合、压缩与保留策略，是时序指标、IoT、监控数据… | 是 |
 | [pgmq](#pgmq) | 轻量消息队列扩展，在 PostgreSQL 内实现类似 SQS 的消息队列（发送、读取、删除、可见性超时），适合任务… | 否 |
@@ -1365,7 +1367,7 @@ FROM events GROUP BY 1 ORDER BY 1;
 
 <div id="data-types-index"></div>
 
-| 插件 | 用途 | 是否需要预加载 |
+| 插件 | 用途 | 是否需要预加载（重启） |
 | --- | --- | --- |
 | [pg_partman](#pg_partman) | pg_partman 是分区表管理扩展，用于自动化「创建分区 + 维护分区」，按时间或 ID 区间自动建分区、按保留… | 是 |
 | [pg_pathman](#pg_pathman) | pg_pathman 是高性能分区管理扩展，支持 HASH 与 RANGE 分区，提供函数式的分区创建 / 绑定 /… | 是 |
@@ -2080,7 +2082,7 @@ SELECT id, content, updated_at FROM docs;
 
 <div id="fdw-index"></div>
 
-| 插件 | 用途 | 是否需要预加载 |
+| 插件 | 用途 | 是否需要预加载（重启） |
 | --- | --- | --- |
 | [dblink](#dblink) | dblink 允许在一个数据库会话中连接并查询另一个 PostgreSQL 数据库（可以是同实例的其他库，也可以是其… | 否 |
 | [postgres_fdw](#postgres_fdw) | postgres_fdw 是 PostgreSQL 官方外部数据包装器，可把远端 PostgreSQL 的表映射为本… | 否 |
@@ -2592,7 +2594,7 @@ SELECT bt_index_check('public.orders_pkey'::regclass, heapallindexed => true);
 
 <div id="ops-monitor-index"></div>
 
-| 插件 | 用途 | 是否需要预加载 |
+| 插件 | 用途 | 是否需要预加载（重启） |
 | --- | --- | --- |
 | [pg_stat_statements](#pg_stat_statements) | pg_stat_statements 用于追踪服务器执行过的所有 SQL 语句的规划与执行统计，可以按总耗时、平均耗… | 是 |
 | [pg_stat_kcache](#pg_stat_kcache) | 内核级资源统计扩展，采集每条语句在操作系统层面的 CPU（user/sys）与读写字节数，与 pg_stat_sta… | 是 |
@@ -3341,7 +3343,7 @@ CREATE EXTENSION IF NOT EXISTS pldbgapi;
 
 <div id="security-index"></div>
 
-| 插件 | 用途 | 是否需要预加载 |
+| 插件 | 用途 | 是否需要预加载（重启） |
 | --- | --- | --- |
 | [pgcrypto](#pgcrypto) | pgcrypto 为 PostgreSQL 提供密码学函数，摘要（MD5、SHA 系列）、HMAC、密码哈希（cry… | 否 |
 | [chkpass](#chkpass) | chkpass 提供一个用于存储加密口令的数据类型，写入明文时按 Unix crypt 方式加密存储，比较时自动加密… | 否 |
@@ -3575,7 +3577,7 @@ SELECT id, name, description, decrypted_secret FROM vault.decrypted_secrets;
 
 <div id="pl-languages-index"></div>
 
-| 插件 | 用途 | 是否需要预加载 |
+| 插件 | 用途 | 是否需要预加载（重启） |
 | --- | --- | --- |
 | [plpgsql](#plpgsql) | PL/pgSQL 是 PostgreSQL 的过程语言扩展，用于编写存储过程、函数、触发器，支持变量、条件分支、循环… | 否 |
 | [plperl](#plperl) | PL/Perl 过程语言，使用 Perl 编写数据库函数与触发器（受信任模式，不能访问宿主文件系统与网络）。 | 否 |
@@ -4041,7 +4043,7 @@ CREATE EXTENSION IF NOT EXISTS ltree_plpythonu;
 
 <div id="other-index"></div>
 
-| 插件 | 用途 | 是否需要预加载 |
+| 插件 | 用途 | 是否需要预加载（重启） |
 | --- | --- | --- |
 | [age](#age) | Apache AGE，在 PostgreSQL 上提供图数据库能力（openCypher 查询语言），可把关系表与图… | 是 |
 | [orafce](#orafce) | Oracle 兼容函数库，提供 Oracle 风格的函数、包与类型（如 `nvl`、`decode`、`dbms_o… | 是 |
