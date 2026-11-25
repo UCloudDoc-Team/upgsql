@@ -29,11 +29,11 @@
 | 检索与文本 | 12 | [查看文档](#检索与文本) |
 | 时序与消息 | 13 | [查看文档](#时序与消息) |
 | 数据类型与分区 | 24 | [查看文档](#数据类型与分区) |
-| 跨库与联邦 | 17 | [查看文档](#跨库与联邦) |
+| 跨库与联邦 | 15 | [查看文档](#跨库与联邦) |
 | 运维与监控 | 23 | [查看文档](#运维与监控) |
 | 安全与合规 | 7 | [查看文档](#安全与合规) |
-| 过程语言 | 9 | [查看文档](#过程语言) |
-| 其他扩展 | 6 | [查看文档](#其他扩展) |
+| 过程语言 | 8 | [查看文档](#过程语言) |
+| 其他扩展 | 5 | [查看文档](#其他扩展) |
 
 ### 空间与地理
 
@@ -2078,7 +2078,7 @@ SELECT id, content, updated_at FROM docs;
 
 ### 跨库与联邦
 
-跨库/跨实例访问、逻辑复制、变更捕获与文件、日志外部数据源。 本类共 17 个插件。
+跨库/跨实例访问、逻辑复制、变更捕获与文件、日志外部数据源。 本类共 15 个插件。
 
 <div id="fdw-index"></div>
 
@@ -2090,7 +2090,6 @@ SELECT id, content, updated_at FROM docs;
 | [oracle_fdw](#oracle_fdw) | Oracle 外部数据包装器，把远端 Oracle 表映射为本地外部表，在 PostgreSQL 中直接查询 Ora… | 否 |
 | [tds_fdw](#tds_fdw) | TDS 外部数据包装器，把 SQL Server / Sybase 的表映射为本地外部表，在 PostgreSQL … | 否 |
 | [clickhouse_fdw](#clickhouse_fdw) | ClickHouse 外部数据包装器，把远端 ClickHouse 表映射为本地外部表，便于把 OLTP 与 OLA… | 否 |
-| [log_fdw](#log_fdw) | 日志外部数据包装器，把服务端日志文件映射为外部表，用 SQL 查询/统计日志（错误、慢查询等），无需登录服务器。 | 否 |
 | [plproxy](#plproxy) | PL/Proxy 是面向水平拆分（分库分表）的代理语言，代理节点上的函数通过 `LANGUAGE plproxy` … | 是 |
 | [pglogical](#pglogical) | pglogical 提供逻辑复制能力，可按表/按库做发布订阅、跨大版本复制、多主与双向复制，是迁移与双写场景的常用工… | 是 |
 | [pglogical_origin](#pglogical_origin) | 兼容性占位扩展，从 PostgreSQL 9.4 升级的场景中保留该扩展名，正常使用 pglogical 时无需关注… | 否 |
@@ -2098,7 +2097,6 @@ SELECT id, content, updated_at FROM docs;
 | [decoderbufs](#decoderbufs) | 逻辑解码输出插件（Debezium 使用），以 Protocol Buffers 格式输出 WAL 变更，供 Deb… | 否 |
 | [wal2json](#wal2json) | 逻辑解码输出插件，把 WAL 变更以 JSON 格式输出给订阅端，用于 CDC（变更数据捕获）、实时同步到 Kafk… | 否 |
 | [zombodb](#zombodb) | ZomboDB 扩展，把 Elasticsearch 作为 PostgreSQL 的索引后端，兼顾事务一致性（数据在… | 是 |
-| [http](#http) | HTTP 客户端扩展（pgsql-http），在 SQL 中直接发起同步 HTTP(S) 请求（GET/POST/H… | 否 |
 | [gzip](#gzip) | gzip 压缩函数扩展（pgsql-gzip），在库内直接对 bytea 数据做 gzip / gunzip 压缩与… | 否 |
 | [amcheck](#amcheck) | 索引与表一致性校验扩展（内置 contrib），用于检查 B-tree 索引是否损坏、是否存在违反约束的堆表数据。 | 否 |
 
@@ -2280,39 +2278,6 @@ CREATE EXTENSION IF NOT EXISTS clickhouse_fdw;
 
 [↑ 返回跨库与联邦插件一览](#fdw-index)
 
-<div id="log_fdw"></div>
-
-#### log_fdw
-
-日志外部数据包装器：把服务端日志文件映射为外部表，用 SQL 查询/统计日志（错误、慢查询等），无需登录服务器。
-
-```sql
-CREATE EXTENSION IF NOT EXISTS log_fdw;
-```
-
-**使用示例**
-
-```sql
-CREATE EXTENSION IF NOT EXISTS log_fdw;
-
--- 1. 列出日志文件，选择 FILEID
-SELECT * FROM log_fdw.list_postgres_log_files();
-
--- 2. 把指定日志文件映射为外部表
-SELECT log_fdw.create_foreign_table('postgres_log', '<FILEID>');
-
--- 3. 用 SQL 分析日志
-SELECT log_time, error_severity, left(message, 120) AS msg
-FROM postgres_log
-WHERE error_severity IN ('ERROR','FATAL')
-ORDER BY log_time DESC
-LIMIT 20;
-```
-
-完整说明（支持版本、参数与注意事项）见本节。
-
-[↑ 返回跨库与联邦插件一览](#fdw-index)
-
 <div id="plproxy"></div>
 
 #### plproxy
@@ -2466,34 +2431,6 @@ ZomboDB 扩展：把 Elasticsearch 作为 PostgreSQL 的索引后端，兼顾事
 
 ```sql
 CREATE EXTENSION IF NOT EXISTS zombodb;
-```
-
-完整说明（支持版本、参数与注意事项）见本节。
-
-[↑ 返回跨库与联邦插件一览](#fdw-index)
-
-<div id="http"></div>
-
-#### http
-
-HTTP 客户端扩展（pgsql-http）：在 SQL 中直接发起同步 HTTP(S) 请求（GET/POST/HEAD 等），用于把外部接口数据拉进数据库或推送数据。
-
-```sql
-CREATE EXTENSION IF NOT EXISTS http;
-```
-
-**使用示例**
-
-```sql
-CREATE EXTENSION IF NOT EXISTS http;
-
--- GET 请求
-SELECT status, content_type, (content::jsonb ->> 'origin') AS origin
-FROM http_get('https://httpbin.org/get');
-
--- POST 请求（JSON 体）
-SELECT status, content
-FROM http_post('https://httpbin.org/post', '{"hello":"world"}', 'application/json');
 ```
 
 完整说明（支持版本、参数与注意事项）见本节。
@@ -3480,7 +3417,7 @@ SELECT id, name, description, decrypted_secret FROM vault.decrypted_secrets;
 
 ### 过程语言
 
-用 Perl / Python / Tcl / JavaScript 等语言编写数据库函数，以及各语言与内置类型的转换模块。 本类共 9 个插件。
+用 Perl / Python / Tcl / JavaScript 等语言编写数据库函数，以及各语言与内置类型的转换模块。 本类共 8 个插件。
 
 <div id="pl-languages-index"></div>
 
@@ -3489,7 +3426,6 @@ SELECT id, name, description, decrypted_secret FROM vault.decrypted_secrets;
 | [plpgsql](#plpgsql) | PL/pgSQL 是 PostgreSQL 的过程语言扩展，用于编写存储过程、函数、触发器，支持变量、条件分支、循环… | 否 |
 | [plperl](#plperl) | PL/Perl 过程语言，使用 Perl 编写数据库函数与触发器（受信任模式，不能访问宿主文件系统与网络）。 | 否 |
 | [pltcl](#pltcl) | PL/Tcl 过程语言，使用 Tcl 编写数据库函数与触发器（受信任模式）。 | 否 |
-| [plv8](#plv8) | PL/V8 过程语言，使用 JavaScript（V8 引擎）编写数据库函数与触发器，适合字符串/JSON 处理与算… | 否 |
 | [plcoffee](#plcoffee) | PL/CoffeeScript 过程语言，用 CoffeeScript（编译到 JavaScript）编写数据库函数… | 否 |
 | [plls](#plls) | PL/LiveScript 过程语言，用 LiveScript（编译到 JavaScript）编写数据库函数与触发器… | 否 |
 | [bool_plperl](#bool_plperl) | 类型转换扩展，为 PL/Perl 提供 bool 类型与 Perl 布尔值之间的自动转换。 | 否 |
@@ -3581,32 +3517,6 @@ SELECT tcl_upper('hello');
 
 [↑ 返回过程语言插件一览](#pl-languages-index)
 
-<div id="plv8"></div>
-
-#### plv8
-
-PL/V8 过程语言：使用 JavaScript（V8 引擎）编写数据库函数与触发器，适合字符串/JSON 处理与算法实现。
-
-```sql
-CREATE EXTENSION IF NOT EXISTS plv8;
-```
-
-**使用示例**
-
-```sql
-CREATE EXTENSION IF NOT EXISTS plv8;
-
-CREATE OR REPLACE FUNCTION js_upper(s text) RETURNS text AS $$
-  return s.toUpperCase();
-$$ LANGUAGE plv8;
-
-SELECT js_upper('hello');
-```
-
-完整说明（支持版本、参数与注意事项）见本节。
-
-[↑ 返回过程语言插件一览](#pl-languages-index)
-
 <div id="plcoffee"></div>
 
 #### plcoffee
@@ -3679,14 +3589,13 @@ CREATE EXTENSION IF NOT EXISTS jsonb_plperl;
 
 ### 其他扩展
 
-图数据库、Oracle 兼容函数、增量物化视图、报表函数与采样方法等。 本类共 6 个插件。
+图数据库、Oracle 兼容函数、增量物化视图、报表函数与采样方法等。 本类共 5 个插件。
 
 <div id="other-index"></div>
 
 | 插件 | 用途 | 是否需要预加载（重启） |
 | --- | --- | --- |
 | [age](#age) | Apache AGE，在 PostgreSQL 上提供图数据库能力（openCypher 查询语言），可把关系表与图… | 是 |
-| [orafce](#orafce) | Oracle 兼容函数库，提供 Oracle 风格的函数、包与类型（如 `nvl`、`decode`、`dbms_o… | 是 |
 | [pg_ivm](#pg_ivm) | 增量视图维护（IVM）扩展，为物化视图建立增量刷新能力，基表数据变更时只更新受影响部分，避免全量重算。 | 是 |
 | [tablefunc](#tablefunc) | tablefunc 提供若干返回表（set-returning）的函数，最常用的是 crosstab（行列转置 / … | 否 |
 | [tsm_system_rows](#tsm_system_rows) | tsm_system_rows 提供 TABLESAMPLE 采样方法 SYSTEM_ROWS，按「行数」对表采样，… | 否 |
@@ -3721,37 +3630,6 @@ $$) AS (a agtype, b agtype);
 SELECT * FROM cypher('demo_graph', $$
   MATCH (a:Person)-[:KNOWS]->(b) RETURN a.name, b.name
 $$) AS (from_name agtype, to_name agtype);
-```
-
-完整说明（支持版本、参数与注意事项）见本节。
-
-[↑ 返回其他扩展插件一览](#other-index)
-
-<div id="orafce"></div>
-
-#### orafce
-
-Oracle 兼容函数库：提供 Oracle 风格的函数、包与类型（如 `nvl`、`decode`、`dbms_output`、`dual` 表等），用于 Oracle 迁移过渡。
-
-> 使用前需将 `orafce` 加入参数 `shared_preload_libraries`（修改后需重启实例）。
-
-```sql
-CREATE EXTENSION IF NOT EXISTS orafce;
-```
-
-**使用示例**
-
-```sql
-CREATE EXTENSION IF NOT EXISTS orafce;
-
-SELECT nvl(null, 'default') AS nvl_result;
-SELECT decode(1, 1, 'one', 2, 'two', 'other') AS decode_result;
-SELECT * FROM dual;
-
-DO $$
-BEGIN
-  dbms_output.put_line('hello from orafce');
-END $$;
 ```
 
 完整说明（支持版本、参数与注意事项）见本节。
