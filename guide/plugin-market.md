@@ -6,7 +6,7 @@
 1. 重启是整实例重启，不是 reload。安装标记为“需重启”的插件时，同一实例上所有数据库的连接都会中断，请安排在业务低峰或维护窗口执行；同实例内多个“需重启”插件建议一次性连续安装，减少重启次数。
 2. “安装完成”不等于“可以使用”。部分插件（如 `wal2json`、`decoderbufs`、`pgl_ddl_deploy`）安装任务会显示成功，但功能仍需要额外条件：通常是 `wal_level = logical`（修改后必须重启才生效，仅 reload 无效），或需要先安装并启用依赖扩展（如 `pgl_ddl_deploy` 依赖 `pglogical`）。请以各插件“安装说明”中的前置条件为准。
 3. 预加载库名与插件名可能不同：例如 `pldbgapi` 对应的预加载库是 `plugin_debugger`，请以本文标注的库名为准，`shared_preload_libraries` 预加载库名不对可能导致启动失败。
-4. `bool_plperl` 依赖 `plperl`，需要先安装 `plperl` 后再安装 `bool_plperl`；`bool_plperlu` 依赖 `plperlu`，需要先安装 `plperlu` 后再安装 `bool_plperlu`。有依赖关系的插件顺序不对可能导致安装失败。
+4. `bool_plperl` 依赖 `plperl`，需要先安装 `plperl` 后再安装 `bool_plperl`。有依赖关系的插件顺序不对可能导致安装失败。
 
 ## 操作说明
 
@@ -29,10 +29,10 @@
 | 检索与文本 | 12 | [查看文档](#检索与文本) |
 | 时序与消息 | 13 | [查看文档](#时序与消息) |
 | 数据类型与分区 | 24 | [查看文档](#数据类型与分区) |
-| 跨库与联邦 | 18 | [查看文档](#跨库与联邦) |
-| 运维与监控 | 26 | [查看文档](#运维与监控) |
+| 跨库与联邦 | 17 | [查看文档](#跨库与联邦) |
+| 运维与监控 | 23 | [查看文档](#运维与监控) |
 | 安全与合规 | 7 | [查看文档](#安全与合规) |
-| 过程语言 | 26 | [查看文档](#过程语言) |
+| 过程语言 | 9 | [查看文档](#过程语言) |
 | 其他扩展 | 6 | [查看文档](#其他扩展) |
 
 ### 空间与地理
@@ -2078,7 +2078,7 @@ SELECT id, content, updated_at FROM docs;
 
 ### 跨库与联邦
 
-跨库/跨实例访问、逻辑复制、变更捕获与文件、日志外部数据源。 本类共 18 个插件。
+跨库/跨实例访问、逻辑复制、变更捕获与文件、日志外部数据源。 本类共 17 个插件。
 
 <div id="fdw-index"></div>
 
@@ -2091,7 +2091,6 @@ SELECT id, content, updated_at FROM docs;
 | [tds_fdw](#tds_fdw) | TDS 外部数据包装器，把 SQL Server / Sybase 的表映射为本地外部表，在 PostgreSQL … | 否 |
 | [clickhouse_fdw](#clickhouse_fdw) | ClickHouse 外部数据包装器，把远端 ClickHouse 表映射为本地外部表，便于把 OLTP 与 OLA… | 否 |
 | [log_fdw](#log_fdw) | 日志外部数据包装器，把服务端日志文件映射为外部表，用 SQL 查询/统计日志（错误、慢查询等），无需登录服务器。 | 否 |
-| [file_fdw](#file_fdw) | 文件外部数据包装器（内置 contrib），把服务器上的 CSV / 文本文件当作外部表查询，也可配合 COPY 用… | 否 |
 | [plproxy](#plproxy) | PL/Proxy 是面向水平拆分（分库分表）的代理语言，代理节点上的函数通过 `LANGUAGE plproxy` … | 是 |
 | [pglogical](#pglogical) | pglogical 提供逻辑复制能力，可按表/按库做发布订阅、跨大版本复制、多主与双向复制，是迁移与双写场景的常用工… | 是 |
 | [pglogical_origin](#pglogical_origin) | 兼容性占位扩展，从 PostgreSQL 9.4 升级的场景中保留该扩展名，正常使用 pglogical 时无需关注… | 否 |
@@ -2308,36 +2307,6 @@ FROM postgres_log
 WHERE error_severity IN ('ERROR','FATAL')
 ORDER BY log_time DESC
 LIMIT 20;
-```
-
-完整说明（支持版本、参数与注意事项）见本节。
-
-[↑ 返回跨库与联邦插件一览](#fdw-index)
-
-<div id="file_fdw"></div>
-
-#### file_fdw
-
-文件外部数据包装器（内置 contrib）：把服务器上的 CSV / 文本文件当作外部表查询，也可配合 COPY 用于导入导出与日志分析。
-
-```sql
-CREATE EXTENSION IF NOT EXISTS file_fdw;
-```
-
-**使用示例**
-
-```sql
-CREATE EXTENSION IF NOT EXISTS file_fdw;
-
-CREATE SERVER file_svr FOREIGN DATA WRAPPER file_fdw;
-
--- 用 CSV 文件建外部表（请替换为实例上实际可读的文件路径）
-CREATE FOREIGN TABLE csv_demo (
-  id   int,
-  name text
-) SERVER file_svr OPTIONS (filename '<CSV 文件绝对路径>', format 'csv', header 'true');
-
-SELECT * FROM csv_demo LIMIT 10;
 ```
 
 完整说明（支持版本、参数与注意事项）见本节。
@@ -2590,7 +2559,7 @@ SELECT bt_index_check('public.orders_pkey'::regclass, heapallindexed => true);
 
 ### 运维与监控
 
-性能监控、锁与页面诊断、表与索引整理、任务调度与回归测试。 本类共 26 个插件。
+性能监控、锁与页面诊断、表与索引整理、任务调度与回归测试。 本类共 23 个插件。
 
 <div id="ops-monitor-index"></div>
 
@@ -2611,12 +2580,9 @@ SELECT bt_index_check('public.orders_pkey'::regclass, heapallindexed => true);
 | [pg_squeeze](#pg_squeeze) | pg_squeeze 用于在线重整膨胀的表与索引，通过建立表的压缩副本再切换，回收死元组与空闲空间，过程中不阻塞读写… | 是 |
 | [hypopg](#hypopg) | hypopg 提供虚拟索引能力，在不真正创建索引的前提下，让优化器按「假设存在的索引」生成执行计划，快速验证加索引是… | 否 |
 | [pg_hint_plan](#pg_hint_plan) | pg_hint_plan 允许在 SQL 中以特殊的注释形式给出执行计划提示（扫描方式、连接方式、连接顺序、并行度等… | 是 |
-| [pageinspect](#pageinspect) | 底层页面检查扩展（内置 contrib），直接读取数据页与索引页内容（页面头、行指针、元组数据），用于深度排障与页面… | 否 |
 | [pg_visibility](#pg_visibility) | 可见性映射检查扩展（内置 contrib），查看表的可见性映射（VM）与页级可见性信息，用于分析 VACUUM 效果… | 否 |
 | [pg_walinspect](#pg_walinspect) | WAL 检查扩展（内置 contrib），直接读取 WAL 记录内容（插入、更新、检查点、事务提交等），用于复制/恢… | 否 |
 | [pg_logicalinspect](#pg_logicalinspect) | pg_logicalinspect 是 PostgreSQL 18 新增的内置模块，用于查看**逻辑解码快照文件**… | 否 |
-| [pg_surgery](#pg_surgery) | 数据修复工具扩展（内置 contrib），在表数据损坏导致无法访问时，直接修改元组可见性等底层标记，用于应急抢救数据… | 否 |
-| [adminpack](#adminpack) | PostgreSQL 管理辅助函数包（内置 contrib），提供日志文件读写、数据库/表大小等管理函数，属早期维护… | 否 |
 | [pgagent](#pgagent) | pgAgent 作业调度器，把作业定义保存在数据库中，由 pgAgent 守护进程按计划执行 SQL/脚本任务，是 … | 否 |
 | [pg_cron](#pg_cron) | pg_cron 是基于 cron 的作业调度插件，语法与 Linux crontab 一致，插件在数据库内以后台进程… | 是 |
 | [pgtap](#pgtap) | 数据库单元测试框架，用 SQL 编写断言（`ok()`、`is()` 等）测试表结构、函数与数据结果，并可输出 TA… | 否 |
@@ -3067,37 +3033,6 @@ WHERE o.created_at > now() - interval '7 days';
 
 [↑ 返回运维与监控插件一览](#ops-monitor-index)
 
-<div id="pageinspect"></div>
-
-#### pageinspect
-
-底层页面检查扩展（内置 contrib）：直接读取数据页与索引页内容（页面头、行指针、元组数据），用于深度排障与页面级分析。
-
-```sql
-CREATE EXTENSION IF NOT EXISTS pageinspect;
-```
-
-**使用示例**
-
-```sql
-CREATE EXTENSION IF NOT EXISTS pageinspect;
-
--- 1. 表页头部信息
-SELECT * FROM page_header(get_raw_page('public.orders', 0));
-
--- 2. 页内元组（前 5 行）
-SELECT lp, lp_off, lp_flags, t_xmin, t_xmax, t_data
-FROM heap_page_items(get_raw_page('public.orders', 0))
-LIMIT 5;
-
--- 3. B-tree 索引页信息
-SELECT * FROM bt_page_items('public.idx_orders_created_at', 1) LIMIT 10;
-```
-
-完整说明（支持版本、参数与注意事项）见本节。
-
-[↑ 返回运维与监控插件一览](#ops-monitor-index)
-
 <div id="pg_visibility"></div>
 
 #### pg_visibility
@@ -3186,34 +3121,6 @@ SELECT * FROM pg_get_logical_snapshot_meta('000000010000000000000002.snap');
 SELECT state, xmin, xmax, building_full_snapshot, in_slot_creation,
        committed_count, next_phase_at
 FROM pg_get_logical_snapshot_info('000000010000000000000002.snap');
-```
-
-完整说明（支持版本、参数与注意事项）见本节。
-
-[↑ 返回运维与监控插件一览](#ops-monitor-index)
-
-<div id="pg_surgery"></div>
-
-#### pg_surgery
-
-数据修复工具扩展（内置 contrib）：在表数据损坏导致无法访问时，直接修改元组可见性等底层标记，用于应急抢救数据。
-
-```sql
-CREATE EXTENSION IF NOT EXISTS pg_surgery;
-```
-
-完整说明（支持版本、参数与注意事项）见本节。
-
-[↑ 返回运维与监控插件一览](#ops-monitor-index)
-
-<div id="adminpack"></div>
-
-#### adminpack
-
-PostgreSQL 管理辅助函数包（内置 contrib）：提供日志文件读写、数据库/表大小等管理函数，属早期维护工具。
-
-```sql
-CREATE EXTENSION IF NOT EXISTS adminpack;
 ```
 
 完整说明（支持版本、参数与注意事项）见本节。
@@ -3573,7 +3480,7 @@ SELECT id, name, description, decrypted_secret FROM vault.decrypted_secrets;
 
 ### 过程语言
 
-用 Perl / Python / Tcl / JavaScript 等语言编写数据库函数，以及各语言与内置类型的转换模块。 本类共 26 个插件。
+用 Perl / Python / Tcl / JavaScript 等语言编写数据库函数，以及各语言与内置类型的转换模块。 本类共 9 个插件。
 
 <div id="pl-languages-index"></div>
 
@@ -3581,30 +3488,13 @@ SELECT id, name, description, decrypted_secret FROM vault.decrypted_secrets;
 | --- | --- | --- |
 | [plpgsql](#plpgsql) | PL/pgSQL 是 PostgreSQL 的过程语言扩展，用于编写存储过程、函数、触发器，支持变量、条件分支、循环… | 否 |
 | [plperl](#plperl) | PL/Perl 过程语言，使用 Perl 编写数据库函数与触发器（受信任模式，不能访问宿主文件系统与网络）。 | 否 |
-| [plperlu](#plperlu) | PL/PerlU 过程语言（不受信任），使用 Perl 编写函数，可访问宿主文件系统与网络，属于特权语言。 | 否 |
-| [plpython2u](#plpython2u) | PL/Python2U 过程语言（不受信任），使用 Python 2 编写数据库函数，可调用 Python 生态库（… | 否 |
-| [plpython3u](#plpython3u) | PL/Python3U 过程语言，使用 Python 3 编写数据库函数与触发器，可直接调用 Python 库（如 … | 否 |
-| [plpythonu](#plpythonu) | PL/PythonU 过程语言（不受信任），使用 Python 2 编写数据库函数（仅在提供 Python2 的版本… | 否 |
 | [pltcl](#pltcl) | PL/Tcl 过程语言，使用 Tcl 编写数据库函数与触发器（受信任模式）。 | 否 |
-| [pltclu](#pltclu) | PL/TclU 过程语言（不受信任），使用 Tcl 编写函数，可执行系统命令与文件操作。 | 否 |
 | [plv8](#plv8) | PL/V8 过程语言，使用 JavaScript（V8 引擎）编写数据库函数与触发器，适合字符串/JSON 处理与算… | 否 |
 | [plcoffee](#plcoffee) | PL/CoffeeScript 过程语言，用 CoffeeScript（编译到 JavaScript）编写数据库函数… | 否 |
 | [plls](#plls) | PL/LiveScript 过程语言，用 LiveScript（编译到 JavaScript）编写数据库函数与触发器… | 否 |
 | [bool_plperl](#bool_plperl) | 类型转换扩展，为 PL/Perl 提供 bool 类型与 Perl 布尔值之间的自动转换。 | 否 |
-| [bool_plperlu](#bool_plperlu) | 类型转换扩展，为不受信任的 PL/PerlU 提供 bool 类型与 Perl 布尔值之间的自动转换。 | 否 |
 | [hstore_plperl](#hstore_plperl) | 类型转换扩展，为 PL/Perl 提供 hstore 与 Perl 哈希之间的自动转换。 | 否 |
-| [hstore_plperlu](#hstore_plperlu) | 类型转换扩展，为不受信任的 PL/PerlU 提供 hstore 与 Perl 哈希之间的自动转换。 | 否 |
-| [hstore_plpython2u](#hstore_plpython2u) | 类型转换扩展，为 PL/Python2U 提供 hstore 与 Python 字典之间的自动转换（仅在提供 Pyt… | 否 |
-| [hstore_plpython3u](#hstore_plpython3u) | 类型转换扩展，为 PL/Python3U 提供 hstore 与 Python 字典之间的自动转换。 | 否 |
-| [hstore_plpythonu](#hstore_plpythonu) | 类型转换扩展，为 PL/PythonU 提供 hstore 与 Python 字典之间的自动转换（仅在提供 Pyth… | 否 |
 | [jsonb_plperl](#jsonb_plperl) | 类型转换扩展，为 PL/Perl 提供 jsonb 与 Perl 数据结构之间的自动转换。 | 否 |
-| [jsonb_plperlu](#jsonb_plperlu) | 类型转换扩展，为不受信任的 PL/PerlU 提供 jsonb 与 Perl 数据结构之间的自动转换。 | 否 |
-| [jsonb_plpython2u](#jsonb_plpython2u) | 类型转换扩展，为 PL/Python2U 提供 jsonb 与 Python 对象之间的自动转换（仅在提供 Pyth… | 否 |
-| [jsonb_plpython3u](#jsonb_plpython3u) | 类型转换扩展，为 PL/Python3U 提供 jsonb 与 Python 对象之间的自动转换。 | 否 |
-| [jsonb_plpythonu](#jsonb_plpythonu) | 类型转换扩展，为 PL/PythonU 提供 jsonb 与 Python 对象之间的自动转换（仅在提供 Pytho… | 否 |
-| [ltree_plpython2u](#ltree_plpython2u) | 类型转换扩展，为 PL/Python2U 提供 ltree 与 Python 对象之间的自动转换（仅在提供 Pyth… | 否 |
-| [ltree_plpython3u](#ltree_plpython3u) | 类型转换扩展，为 PL/Python3U 提供 ltree 与 Python 对象之间的自动转换。 | 否 |
-| [ltree_plpythonu](#ltree_plpythonu) | 类型转换扩展，为 PL/PythonU 提供 ltree 与 Python 对象之间的自动转换（仅在提供 Pytho… | 否 |
 
 <div id="plpgsql"></div>
 
@@ -3665,74 +3555,6 @@ SELECT perl_upper('hello');
 
 [↑ 返回过程语言插件一览](#pl-languages-index)
 
-<div id="plperlu"></div>
-
-#### plperlu
-
-PL/PerlU 过程语言（不受信任）：使用 Perl 编写函数，可访问宿主文件系统与网络，属于特权语言。
-
-```sql
-CREATE EXTENSION IF NOT EXISTS plperlu;
-```
-
-完整说明（支持版本、参数与注意事项）见本节。
-
-[↑ 返回过程语言插件一览](#pl-languages-index)
-
-<div id="plpython2u"></div>
-
-#### plpython2u
-
-PL/Python2U 过程语言（不受信任）：使用 Python 2 编写数据库函数，可调用 Python 生态库（仅在提供 Python2 的版本可用）。
-
-```sql
-CREATE EXTENSION IF NOT EXISTS plpython2u;
-```
-
-完整说明（支持版本、参数与注意事项）见本节。
-
-[↑ 返回过程语言插件一览](#pl-languages-index)
-
-<div id="plpython3u"></div>
-
-#### plpython3u
-
-PL/Python3U 过程语言：使用 Python 3 编写数据库函数与触发器，可直接调用 Python 库（如 pandas、numpy）。
-
-```sql
-CREATE EXTENSION IF NOT EXISTS plpython3u;
-```
-
-**使用示例**
-
-```sql
-CREATE EXTENSION IF NOT EXISTS plpython3u;
-
-CREATE OR REPLACE FUNCTION py_word_count(s text) RETURNS int AS $$
-  return len(s.split())
-$$ LANGUAGE plpython3u;
-
-SELECT py_word_count('postgres is great');
-```
-
-完整说明（支持版本、参数与注意事项）见本节。
-
-[↑ 返回过程语言插件一览](#pl-languages-index)
-
-<div id="plpythonu"></div>
-
-#### plpythonu
-
-PL/PythonU 过程语言（不受信任）：使用 Python 2 编写数据库函数（仅在提供 Python2 的版本可用）。
-
-```sql
-CREATE EXTENSION IF NOT EXISTS plpythonu;
-```
-
-完整说明（支持版本、参数与注意事项）见本节。
-
-[↑ 返回过程语言插件一览](#pl-languages-index)
-
 <div id="pltcl"></div>
 
 #### pltcl
@@ -3753,20 +3575,6 @@ CREATE OR REPLACE FUNCTION tcl_upper(s text) RETURNS text AS $$
 $$ LANGUAGE pltcl;
 
 SELECT tcl_upper('hello');
-```
-
-完整说明（支持版本、参数与注意事项）见本节。
-
-[↑ 返回过程语言插件一览](#pl-languages-index)
-
-<div id="pltclu"></div>
-
-#### pltclu
-
-PL/TclU 过程语言（不受信任）：使用 Tcl 编写函数，可执行系统命令与文件操作。
-
-```sql
-CREATE EXTENSION IF NOT EXISTS pltclu;
 ```
 
 完整说明（支持版本、参数与注意事项）见本节。
@@ -3841,20 +3649,6 @@ CREATE EXTENSION IF NOT EXISTS bool_plperl;
 
 [↑ 返回过程语言插件一览](#pl-languages-index)
 
-<div id="bool_plperlu"></div>
-
-#### bool_plperlu
-
-类型转换扩展：为不受信任的 PL/PerlU 提供 bool 类型与 Perl 布尔值之间的自动转换。
-
-```sql
-CREATE EXTENSION IF NOT EXISTS bool_plperlu;
-```
-
-完整说明（支持版本、参数与注意事项）见本节。
-
-[↑ 返回过程语言插件一览](#pl-languages-index)
-
 <div id="hstore_plperl"></div>
 
 #### hstore_plperl
@@ -3869,62 +3663,6 @@ CREATE EXTENSION IF NOT EXISTS hstore_plperl;
 
 [↑ 返回过程语言插件一览](#pl-languages-index)
 
-<div id="hstore_plperlu"></div>
-
-#### hstore_plperlu
-
-类型转换扩展：为不受信任的 PL/PerlU 提供 hstore 与 Perl 哈希之间的自动转换。
-
-```sql
-CREATE EXTENSION IF NOT EXISTS hstore_plperlu;
-```
-
-完整说明（支持版本、参数与注意事项）见本节。
-
-[↑ 返回过程语言插件一览](#pl-languages-index)
-
-<div id="hstore_plpython2u"></div>
-
-#### hstore_plpython2u
-
-类型转换扩展：为 PL/Python2U 提供 hstore 与 Python 字典之间的自动转换（仅在提供 Python2 的版本可用）。
-
-```sql
-CREATE EXTENSION IF NOT EXISTS hstore_plpython2u;
-```
-
-完整说明（支持版本、参数与注意事项）见本节。
-
-[↑ 返回过程语言插件一览](#pl-languages-index)
-
-<div id="hstore_plpython3u"></div>
-
-#### hstore_plpython3u
-
-类型转换扩展：为 PL/Python3U 提供 hstore 与 Python 字典之间的自动转换。
-
-```sql
-CREATE EXTENSION IF NOT EXISTS hstore_plpython3u;
-```
-
-完整说明（支持版本、参数与注意事项）见本节。
-
-[↑ 返回过程语言插件一览](#pl-languages-index)
-
-<div id="hstore_plpythonu"></div>
-
-#### hstore_plpythonu
-
-类型转换扩展：为 PL/PythonU 提供 hstore 与 Python 字典之间的自动转换（仅在提供 Python2 的版本可用）。
-
-```sql
-CREATE EXTENSION IF NOT EXISTS hstore_plpythonu;
-```
-
-完整说明（支持版本、参数与注意事项）见本节。
-
-[↑ 返回过程语言插件一览](#pl-languages-index)
-
 <div id="jsonb_plperl"></div>
 
 #### jsonb_plperl
@@ -3933,104 +3671,6 @@ CREATE EXTENSION IF NOT EXISTS hstore_plpythonu;
 
 ```sql
 CREATE EXTENSION IF NOT EXISTS jsonb_plperl;
-```
-
-完整说明（支持版本、参数与注意事项）见本节。
-
-[↑ 返回过程语言插件一览](#pl-languages-index)
-
-<div id="jsonb_plperlu"></div>
-
-#### jsonb_plperlu
-
-类型转换扩展：为不受信任的 PL/PerlU 提供 jsonb 与 Perl 数据结构之间的自动转换。
-
-```sql
-CREATE EXTENSION IF NOT EXISTS jsonb_plperlu;
-```
-
-完整说明（支持版本、参数与注意事项）见本节。
-
-[↑ 返回过程语言插件一览](#pl-languages-index)
-
-<div id="jsonb_plpython2u"></div>
-
-#### jsonb_plpython2u
-
-类型转换扩展：为 PL/Python2U 提供 jsonb 与 Python 对象之间的自动转换（仅在提供 Python2 的版本可用）。
-
-```sql
-CREATE EXTENSION IF NOT EXISTS jsonb_plpython2u;
-```
-
-完整说明（支持版本、参数与注意事项）见本节。
-
-[↑ 返回过程语言插件一览](#pl-languages-index)
-
-<div id="jsonb_plpython3u"></div>
-
-#### jsonb_plpython3u
-
-类型转换扩展：为 PL/Python3U 提供 jsonb 与 Python 对象之间的自动转换。
-
-```sql
-CREATE EXTENSION IF NOT EXISTS jsonb_plpython3u;
-```
-
-完整说明（支持版本、参数与注意事项）见本节。
-
-[↑ 返回过程语言插件一览](#pl-languages-index)
-
-<div id="jsonb_plpythonu"></div>
-
-#### jsonb_plpythonu
-
-类型转换扩展：为 PL/PythonU 提供 jsonb 与 Python 对象之间的自动转换（仅在提供 Python2 的版本可用）。
-
-```sql
-CREATE EXTENSION IF NOT EXISTS jsonb_plpythonu;
-```
-
-完整说明（支持版本、参数与注意事项）见本节。
-
-[↑ 返回过程语言插件一览](#pl-languages-index)
-
-<div id="ltree_plpython2u"></div>
-
-#### ltree_plpython2u
-
-类型转换扩展：为 PL/Python2U 提供 ltree 与 Python 对象之间的自动转换（仅在提供 Python2 的版本可用）。
-
-```sql
-CREATE EXTENSION IF NOT EXISTS ltree_plpython2u;
-```
-
-完整说明（支持版本、参数与注意事项）见本节。
-
-[↑ 返回过程语言插件一览](#pl-languages-index)
-
-<div id="ltree_plpython3u"></div>
-
-#### ltree_plpython3u
-
-类型转换扩展：为 PL/Python3U 提供 ltree 与 Python 对象之间的自动转换。
-
-```sql
-CREATE EXTENSION IF NOT EXISTS ltree_plpython3u;
-```
-
-完整说明（支持版本、参数与注意事项）见本节。
-
-[↑ 返回过程语言插件一览](#pl-languages-index)
-
-<div id="ltree_plpythonu"></div>
-
-#### ltree_plpythonu
-
-类型转换扩展：为 PL/PythonU 提供 ltree 与 Python 对象之间的自动转换（仅在提供 Python2 的版本可用）。
-
-```sql
-CREATE EXTENSION IF NOT EXISTS ltree_plpythonu;
 ```
 
 完整说明（支持版本、参数与注意事项）见本节。
